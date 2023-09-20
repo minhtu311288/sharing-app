@@ -1,35 +1,47 @@
 import { Disclosure } from '@headlessui/react'
+import { useNavigate, Link } from "react-router-dom";
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { CallAPIPOST } from '../shared/APIs'
 import { useState } from 'react'
 
-const user = {
-    email: 'tom@example.com',
-    imageUrl:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
 export default function Header() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("")
     const [passWord, setPassWord] = useState("")
     const [requireEmail, setRequireEmail] = useState(false)
     const [requirePassWord, setRequirePassWord] = useState(false)
     const [serverError, setServerError] = useState(false)
+    const [isLogined, setIsLogined] = useState(localStorage.getItem("email") ? true : false);
     const handleLogin = async () => {
-        if (!email) 
+        if (!email)
             setRequireEmail(true)
         else
             setRequireEmail(false)
-        if (!passWord) 
+        if (!passWord)
             setRequirePassWord(true)
         else
             setRequirePassWord(false)
-        
+
         const data = await CallAPIPOST('/login', { email: email, password: passWord })
         if (data.success) {
-            console.log('login thanh cong');
+            setIsLogined(true);
+            localStorage.setItem("email", email)
         } else {
             setServerError(true)
         }
+    }
+
+    const gotoShareVideo = () => {
+        navigate("/share-video");
+    }
+
+    const goToRegister = () => {
+        navigate("/register");
+    }
+
+    const handleLogOut = () => {
+        setIsLogined(false);
+        localStorage.removeItem("email");
     }
 
     return (
@@ -41,26 +53,37 @@ export default function Header() {
                             <div className="flex h-16 items-center justify-between">
                                 <div className="flex items-center">
                                     <div className="flex-shrink-0">
-                                        <img
-                                            className="h-8 w-8"
-                                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                                            alt="Your Company"
-                                        />
-
+                                        <Link to="/">
+                                            <img
+                                                className="h-8 w-8"
+                                                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                                                alt="Your Company"
+                                            />
+                                        </Link>
                                     </div>
                                     <div className="flex-initial w-64 text-white pl-2 text-xl">
-                                        <h1>Funny movies</h1>
+                                        <Link to="/">
+                                            <h1>Funny movies</h1>
+                                        </Link>
                                     </div>
                                 </div>
                                 <div className="hidden md:block">
                                     <div className="ml-4 flex items-center md:ml-6">
-                                        <input onChange={(e) => setEmail(e.target.value)} className="border-slate-200 placeholder-slate-400 contrast-more:border-slate-400 contrast-more:placeholder-slate-500 w-24 rounded-md" placeholder='email' />
-                                        <input onChange={(e) => setPassWord(e.target.value)} className="border-slate-200 placeholder-slate-400 contrast-more:border-slate-400 contrast-more:placeholder-slate-500 ml-4 w-24 rounded-md" placeholder='password' />
-                                        <button className="rounded-full text-white ml-4 bg-indigo-500 py-1 px-3 hover:bg-violet-600 active:bg-violet-700" onClick={handleLogin}>Login</button> <button className="rounded-full text-white ml-4 bg-indigo-500 py-1 px-3 hover:bg-violet-600 active:bg-violet-700">Register</button>
-                                        {serverError && !requireEmail && !requirePassWord &&  <a className="text-red-400 text-center my-2">Authentication failed</a>}
-                                        {/* Profile dropdown */}
-                                        <div className="text-base font-medium leading-none text-white"><span>Wellcome </span> {user.email}</div>
-                                        
+                                        {!isLogined &&
+                                            <><input onChange={(e) => setEmail(e.target.value)} className="border-slate-200 placeholder-slate-400 contrast-more:border-slate-400 contrast-more:placeholder-slate-500 w-44 rounded-md" placeholder='email' />
+                                                <input type='password' onChange={(e) => setPassWord(e.target.value)} className="border-slate-200 placeholder-slate-400 contrast-more:border-slate-400 contrast-more:placeholder-slate-500 ml-4 w-44 rounded-md" placeholder='password' />
+                                                <button className="rounded-full text-white ml-4 bg-indigo-500 py-1 px-3 hover:bg-violet-600 active:bg-violet-700" onClick={handleLogin}>Login</button>
+                                                <button className="rounded-full text-white ml-4 bg-indigo-500 py-1 px-3 hover:bg-violet-600 active:bg-violet-700" onClick={goToRegister}>Register</button>
+                                                {serverError && !requireEmail && !requirePassWord && <a className="text-red-400 text-center my-2">Authentication failed</a>}</>
+                                        }
+                                        {isLogined &&
+                                            <>
+                                                <div className="text-base font-medium leading-none text-white">Wellcome {localStorage.getItem("email")}</div>
+                                                <button className="rounded-full text-white ml-4 bg-indigo-500 py-1 px-3 hover:bg-violet-600 active:bg-violet-700" onClick={gotoShareVideo}>Share video</button>
+                                                <button className="rounded-full text-white ml-4 bg-indigo-500 py-1 px-3 hover:bg-violet-600 active:bg-violet-700" onClick={handleLogOut}>Logout</button>
+                                            </>
+
+                                        }
                                     </div>
                                 </div>
                                 <div className="-mr-2 flex md:hidden">
@@ -87,7 +110,7 @@ export default function Header() {
                                 </div>
                                 <div className="flex items-center px-5">
                                     <div className="ml-3">
-                                        <div className="text-base font-medium leading-none text-white"><span>Wellcome </span> {user.email}</div>
+                                        <div className="text-base font-medium leading-none text-white"><span>Wellcome </span> {localStorage.getItem("email")}</div>
                                     </div>
                                 </div>
                             </div>

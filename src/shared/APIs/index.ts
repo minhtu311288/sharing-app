@@ -1,10 +1,10 @@
 import axios, { AxiosRequestConfig } from 'axios'
-const HOST = 'http://localhost:3001'
+import 'dotenv/config'
 // POST
 export const CallAPIPOST = (url: string, request: any, optional?: AxiosRequestConfig<any> | undefined) => {
-    const response = axios.post(HOST + url, request, optional)
+    const response = axios.post(process.env.HOST + url, request, optional)
         .then(function (response: { status: number; data: any }) {
-            if (response.status != 200) return
+            if (response.status !== 200) return
             return response.data
         })
         .catch(function (error: any) {
@@ -16,9 +16,9 @@ export const CallAPIPOST = (url: string, request: any, optional?: AxiosRequestCo
 
 // GET
 export const CallAPIGET = (url: string, header: AxiosRequestConfig<any> | undefined) => {
-    const response = axios.get(HOST + url, header)
+    const response = axios.get(process.env.HOST + url, header)
         .then(function (response: { status: number; data: any }) {
-            if (response.status != 200) return
+            if (response.status !== 200) return
             return response.data
         })
         .catch(function (error: any) {
