@@ -29,7 +29,7 @@ const ShareVideo = () => {
     //   });
     const fetchVideoInfo = async () => {
       try {
-        const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=AIzaSyDz6pFoCgQZQQDlJNaUIUwSK7UaMp5RPhM`);
+        const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${process.env.GOOGLE_API}`);
         const videoData = response.data.items[0].snippet;
         setVideoInfo({
           title: videoData.title,
