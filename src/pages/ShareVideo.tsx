@@ -4,6 +4,7 @@ import Header from '../components/Header'
 import { truncateString } from '../utils';
 import { CallAPIPOST } from '../shared/APIs';
 import Notification from '../components/Notification'
+import env from "react-dotenv";
 
 const ShareVideo = () => {
   const [videoInfo, setVideoInfo] = useState<any>({});
@@ -13,23 +14,9 @@ const ShareVideo = () => {
 
   useEffect(() => {
     const videoId = url.split('v=')[1];
-
-    // axios.get(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=AIzaSyDz6pFoCgQZQQDlJNaUIUwSK7UaMp5RPhM`)
-    //   .then(response => {
-    //     const videoData = response.data.items[0].snippet;
-    //     setVideoInfo({
-    //       title: videoData.title,
-    //       description: videoData.description,
-    //       thumbnail: videoData.thumbnails.medium.url,
-    //       sharedBy: localStorage.getItem('email')
-    //     });
-    //   })
-    //   .catch(error => {
-    //     console.error('Error fetching YouTube data', error);
-    //   });
     const fetchVideoInfo = async () => {
       try {
-        const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${process.env.GOOGLE_API}`);
+        const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=AIzaSyDz6pFoCgQZQQDlJNaUIUwSK7UaMp5RPhM`);
         const videoData = response.data.items[0].snippet;
         setVideoInfo({
           title: videoData.title,
